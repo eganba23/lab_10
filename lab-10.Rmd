@@ -13,24 +13,92 @@ library(tidymodels)
 library(openintro)
 ```
 
-## Exercise 1
+## Simple Linear Regression
 
-*Provide your answer here.*  
-Add code chunks as needed. Ensure code chunks are properly labeled without spaces.
 
-```{r exercise1_code}
-# Add your R code here
+```{r simple regression}
+view(evals)
+
+m_bty <- lm(score ~ bty_avg, data = evals)
+
+summary(m_bty)
+
 ```
 
-## Exercise 2
+Linear Model: y = 3.88 + .067x
+R-squared: .035
+Adjusted R-squared: .033
 
-*Provide your answer here.*  
-Add code chunks as needed.
+## Multiple Linear Regression
 
-```{r exercise2_code}
-# Add your R code here
+```{r Q2}
+
+m_bty_gen <- lm(score ~ bty_avg + gender, data = evals)
+
+summary(m_bty_gen)
+
 ```
 
-## Additional Exercises
+Linear model: y = 3.747 + .074(bty_avg) + .172(gender)
+R-squared: .059
+Adjusted R-squared: .055
 
-*Repeat the format above for additional exercises.*
+#### Interpretation
+
+intercept: A female with an average beauty rating of zero will get an evaluation of 3.7
+
+bty_avg slope: For people of the same gender, increasing their average beauty rating by one will only increase their evaluation score by .07
+
+gender slope: A male will have .172 higher eval score than a female with the same average beauty rating.
+
+#### Questions 4-9
+
+4. This model (m_bty_gen) accounts for 5.5% of the variance in score
+
+5. For males: y = 3.747 + .074(bty_avg) + .172
+
+6. Males will tend to have the higher beauty rating compared to females
+
+7. Males have a slightly higher evaluation score (.172) than females for the same beauty rating.
+
+8. m_bty r-squared of .033 versus m_bty_gen r-squared of .055. Adding gender to the model only accounts for an additional 2.2% of the variance of score. I would say adding it made little difference in explaining evaluation scores.
+
+9. .067 bty_avg slope for the original model. .074 bty_avg slope for the model with gender. Adding gender meant that beauty rating of professor had a slightly increased  "weight" for predicting score.
+
+### Replacing gender with rank
+
+```{r add in rank to original}
+
+m_bty_rank <- lm(score ~ bty_avg + rank, data = evals)
+
+summary(m_bty_rank)
+
+```
+
+Linear model: y = 3.982 + .068(bty_avg) - .161(tenure track)
+Linear model: y = 3.982 + .068(bty_avg) - .126(tenured)
+
+R-squared: .047
+Adjusted R-squared: .040
+
+#### Interpretation
+
+intercept: A teaching professor with an average beauty rating of zero will get an evaluation of 3.98
+
+bty_avg slope: For people of the same rank, increasing their average beauty rating by one will only increase their evaluation score by .068
+
+tenure track slope: A tenure track professor will have a .161 lower eval score than a teaching professor with the same average beauty rating.
+
+tenured slope: A tenured professor will have a .126 lower eval score than a teaching professor with the same average beauty rating.
+
+
+## Finding the best model
+
+Going forward, I will only consider the following variables as potential predictors: rank, ethnicity, gender, language, age, cls_perc_eval, cls_did_eval, cls_students, cls_level, cls_profs, cls_credits, bty_avg.
+
+11. Based on the predictors above, I would guess ethinicity would be the worst predictors.
+
+```
+
+
+language, cls_perc_eval (percent students completed), cls_did_eval (number students completed) would be good predictors of evaluation.
