@@ -1,13 +1,13 @@
 ---
 title: "Lab 10 - Grading the professor, Pt. 2"
-author: "Insert your name here"
-date: "Insert date here"
+author: "Benjamin Egan"
+date: "3/25/2025"
 output: github_document
 ---
 
-## Load packages and data
+This is the link to the assignment page (https://datascience4psych.github.io/DataScience4Psych/lab10.html). This includes the relevant information for the assignment alongside required questions I needed to answer.
 
-```{r load-packages, message=FALSE}
+```{r load-packages, message=FALSE, echo = FALSE}
 library(tidyverse) 
 library(tidymodels)
 library(openintro)
