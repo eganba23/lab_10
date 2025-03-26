@@ -7,7 +7,7 @@ output: github_document
 
 This is the link to the assignment page (https://datascience4psych.github.io/DataScience4Psych/lab10.html). This includes the relevant information for the assignment alongside required questions I needed to answer.
 
-```{r load-packages, message=FALSE, echo = FALSE}
+```{r load-packages, message=FALSE, warning = FALSE, echo = FALSE}
 library(tidyverse) 
 library(tidymodels)
 library(openintro)
@@ -25,8 +25,8 @@ summary(m_bty)
 
 ```
 
-Linear Model: y = 3.88 + .067x
-R-squared: .035
+Linear Model: y = 3.88 + .067x <br/>
+R-squared: .035 <br/>
 Adjusted R-squared: .033
 
 ## Multiple Linear Regression
@@ -39,9 +39,9 @@ summary(m_bty_gen)
 
 ```
 
-Linear model: y = 3.747 + .074(bty_avg) + .172(gender)
-R-squared: .059
-Adjusted R-squared: .055
+Linear model: y = 3.747 + .074(bty_avg) + .172(gender) <br/>
+R-squared: .059 <br/>
+Adjusted R-squared: .055 <br/>
 
 #### Interpretation
 
@@ -75,10 +75,10 @@ summary(m_bty_rank)
 
 ```
 
-Linear model: y = 3.982 + .068(bty_avg) - .161(tenure track)
+Linear model: y = 3.982 + .068(bty_avg) - .161(tenure track) <br/>
 Linear model: y = 3.982 + .068(bty_avg) - .126(tenured)
 
-R-squared: .047
+R-squared: .047 <br/>
 Adjusted R-squared: .040
 
 #### Interpretation
@@ -96,9 +96,50 @@ tenured slope: A tenured professor will have a .126 lower eval score than a teac
 
 Going forward, I will only consider the following variables as potential predictors: rank, ethnicity, gender, language, age, cls_perc_eval, cls_did_eval, cls_students, cls_level, cls_profs, cls_credits, bty_avg.
 
-11. Based on the predictors above, I would guess ethinicity would be the worst predictors.
+11. Based on the predictors above, I would guess ethnicity would be the worst predictors.
+
+``` {r worst predictor}
+
+worst_pred <- lm(score ~ ethnicity, data = evals)
+
+summary(worst_pred)
 
 ```
 
+The Adjusted R-squared value is .0035, meaning that ethnicity accounts for around .35% of the variance in score
 
-language, cls_perc_eval (percent students completed), cls_did_eval (number students completed) would be good predictors of evaluation.
+13. Since I'm already including the percent of students completing the eval and the total number of students, I think it wouldn't make sense to include cls_did_eval (number of students who completed the eval). The information is already conveyed by the other two variables, and this addition would be redundant.
+
+#### Figuring out best model
+
+```{r all predictors}
+
+evals$ethnicity_relevel <- relevel(evals$ethnicity, ref = "not minority")
+
+all_pred <- lm(score ~ rank + ethnicity + gender + language + age + cls_perc_eval + cls_students + cls_level + cls_profs + cls_credits + bty_avg, data = evals)
+
+summary(all_pred)
+
+```
+
+```{r best model}
+
+evals$ethnicity_relevel <- relevel(evals$ethnicity, ref = "not minority")
+
+best_model <- lm(score ~  ethnicity_relevel + gender + language + age + cls_perc_eval + cls_students + cls_credits + bty_avg, data = evals)
+
+summary(best_model)
+
+```
+
+Final model: y = .20(ethnicity) + .177(gender) - .151(language) - .005(age) + .005(cls_perc_eval) + .000(cls_students) + .523(cls_credits) + .062(bty_avg)
+
+#### Interpretations
+Beauty Average: holding all other variables constant, a 1 point increase in beauty rating corresponds with a .062 increase in score.
+
+Ethnicity: holding all other variables constant, minority professors see a .204 decrease in evaluation score compared to non-minority professors 
+
+#### The ideal professor
+A high scoring professor would be a teaching non-minority male professor. He would speak English, teach a multiple credit course, and have a high average beauty rating.
+
+18. I would say no. As it stands, the current model accounts for roughly 15% of the variance in evaluation scores. Variables I would want to factor in are things like the number of years teaching, subject of the course material, how long the professor has been teaching that specific course, etc. I think these would be variables that greatly impact the current model and can provide additional explanation for the variance in professor scores.
